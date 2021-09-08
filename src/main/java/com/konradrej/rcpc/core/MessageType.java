@@ -1,0 +1,30 @@
+package com.konradrej.rcpc.core;
+
+/**
+ * Specifies available message types.
+ *
+ * @author Konrad Rej
+ * @author www.konradrej.com
+ * @version 1.0
+ */
+public enum MessageType {
+    INFO_CURRENT_VOLUME_UPDATE,
+    INFO_USER_CLOSED_CONNECTION,
+
+    ACTION_INCREASE_VOLUME,
+    ACTION_DECREASE_VOLUME,
+    ACTION_PREVIOUS_TRACK,
+    ACTION_NEXT_TRACK,
+    ACTION_PLAY_PAUSE,
+    ACTION_STOP,
+    ACTION_SET_VOLUME,
+    ACTION_PRIMARY_CLICK,
+    ACTION_SECONDARY_CLICK,
+    ACTION_MIDDLE_CLICK,
+    ACTION_CLICK_AND_DRAG,
+    ACTION_SCROLL,
+    ACTION_MOVE,
+
+    ERROR_USER_ABORTED_CONNECTION,
+    ERROR_NOT_IMPLEMENTED_TYPE_SENT
+}
