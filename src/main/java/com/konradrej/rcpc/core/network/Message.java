@@ -1,4 +1,4 @@
-package com.konradrej.rcpc.core;
+package com.konradrej.rcpc.core.network;
 
 import java.io.Serializable;
 import java.util.Map;

@@ -1,11 +1,11 @@
-package com.konradrej.rcpc.core;
+package com.konradrej.rcpc.core.network;
 
 /**
  * Specifies available message types.
  *
  * @author Konrad Rej
  * @author www.konradrej.com
- * @version 1.0
+ * @version 1.1
  */
 public enum MessageType {
     INFO_CURRENT_VOLUME_UPDATE,
@@ -25,6 +25,7 @@ public enum MessageType {
     ACTION_SCROLL,
     ACTION_MOVE,
 
+    ERROR_SERVER_BUSY,
     ERROR_USER_ABORTED_CONNECTION,
     ERROR_NOT_IMPLEMENTED_TYPE_SENT
 }
