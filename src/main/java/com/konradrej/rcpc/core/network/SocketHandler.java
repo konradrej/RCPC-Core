@@ -32,6 +32,7 @@ public abstract class SocketHandler implements Runnable {
      * Simplified constructor which enables both input and output.
      *
      * @param socket the connected socket
+     * @param LOGGER logger to be used, can be null to disable
      */
     public SocketHandler(Socket socket, Logger LOGGER) {
         this(socket, true, true, LOGGER);
@@ -43,6 +44,7 @@ public abstract class SocketHandler implements Runnable {
      * @param socket        the connected socket
      * @param inputEnabled  whether to enable input
      * @param outputEnabled whether to enable output
+     * @param LOGGER        logger to be used, can be null to disable
      */
     public SocketHandler(Socket socket, boolean inputEnabled, boolean outputEnabled, Logger LOGGER) {
         this.socket = socket;
@@ -55,7 +57,9 @@ public abstract class SocketHandler implements Runnable {
                 Thread readerThread = new Thread(reader);
                 readerThread.start();
             } catch (IOException e) {
-                LOGGER.error("Could not construct inputstream: " + e.getLocalizedMessage());
+                if (LOGGER != null) {
+                    LOGGER.error("Could not construct inputstream: " + e.getLocalizedMessage());
+                }
             }
         }
 
@@ -66,7 +70,9 @@ public abstract class SocketHandler implements Runnable {
                 Thread writerThread = new Thread(writer);
                 writerThread.start();
             } catch (IOException e) {
-                LOGGER.error("Could not construct outputstream: " + e.getLocalizedMessage());
+                if (LOGGER != null) {
+                    LOGGER.error("Could not construct outputstream: " + e.getLocalizedMessage());
+                }
             }
         }
     }
@@ -85,7 +91,9 @@ public abstract class SocketHandler implements Runnable {
         } catch (IOException ignored) {
         }
 
-        LOGGER.info("Socket disconnected.");
+        if (LOGGER != null) {
+            LOGGER.info("Socket disconnected.");
+        }
     }
 
     private class Reader implements Runnable {
@@ -104,7 +112,9 @@ public abstract class SocketHandler implements Runnable {
                     inputQueue.add(message);
                 }
             } catch (IOException | ClassNotFoundException e) {
-                LOGGER.error("Error while getting message: " + e.getLocalizedMessage());
+                if (LOGGER != null) {
+                    LOGGER.error("Error while getting message: " + e.getLocalizedMessage());
+                }
             }
 
             disconnect();
@@ -129,7 +139,9 @@ public abstract class SocketHandler implements Runnable {
                     }
                 }
             } catch (IOException | InterruptedException e) {
-                LOGGER.error("Error while sending message: " + e.getLocalizedMessage());
+                if (LOGGER != null) {
+                    LOGGER.error("Error while sending message: " + e.getLocalizedMessage());
+                }
             }
         }
     }
