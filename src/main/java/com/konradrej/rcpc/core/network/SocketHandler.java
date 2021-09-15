@@ -10,15 +10,14 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * Base handler implementation which allows with the help of a HandlerManager
- * implementation to customize the behaviour of SocketHostHandler on socket accepted
- * without access to the internals of it.
+ * Base handler implementation which allows for easy sending
+ * and receiving of messages using the input and output queue.
  *
  * @author Konrad Rej
  * @author www.konradrej.com
  * @version 1.0
  */
-public abstract class Handler implements Runnable {
+public abstract class SocketHandler implements Runnable {
     private final Logger LOGGER;
 
     protected final Socket socket;
@@ -34,7 +33,7 @@ public abstract class Handler implements Runnable {
      *
      * @param socket the connected socket
      */
-    public Handler(Socket socket, Logger LOGGER) {
+    public SocketHandler(Socket socket, Logger LOGGER) {
         this(socket, true, true, LOGGER);
     }
 
@@ -45,7 +44,7 @@ public abstract class Handler implements Runnable {
      * @param inputEnabled  whether to enable input
      * @param outputEnabled whether to enable output
      */
-    public Handler(Socket socket, boolean inputEnabled, boolean outputEnabled, Logger LOGGER) {
+    public SocketHandler(Socket socket, boolean inputEnabled, boolean outputEnabled, Logger LOGGER) {
         this.socket = socket;
         this.LOGGER = LOGGER;
 
