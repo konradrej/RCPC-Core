@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Base handler implementation which allows for easy sending
@@ -15,14 +15,15 @@ import java.util.concurrent.BlockingQueue;
  *
  * @author Konrad Rej
  * @author www.konradrej.com
- * @version 1.0
+ * @version 1.1
+ * @since 1.0
  */
 public abstract class SocketHandler implements Runnable {
     private final Logger LOGGER;
 
     protected final Socket socket;
-    protected final BlockingQueue<Message> inputQueue = new ArrayBlockingQueue<>(16);
-    protected final BlockingQueue<Message> outputQueue = new ArrayBlockingQueue<>(16);
+    protected final BlockingQueue<Message> inputQueue = new LinkedBlockingQueue<>();
+    protected final BlockingQueue<Message> outputQueue = new LinkedBlockingQueue<>();
 
     protected Reader reader = null;
     protected Writer writer = null;
@@ -33,6 +34,7 @@ public abstract class SocketHandler implements Runnable {
      *
      * @param socket the connected socket
      * @param LOGGER logger to be used, can be null to disable
+     * @since 1.0
      */
     public SocketHandler(Socket socket, Logger LOGGER) {
         this(socket, true, true, LOGGER);
@@ -45,6 +47,7 @@ public abstract class SocketHandler implements Runnable {
      * @param inputEnabled  whether to enable input
      * @param outputEnabled whether to enable output
      * @param LOGGER        logger to be used, can be null to disable
+     * @since 1.0
      */
     public SocketHandler(Socket socket, boolean inputEnabled, boolean outputEnabled, Logger LOGGER) {
         this.socket = socket;
@@ -82,6 +85,8 @@ public abstract class SocketHandler implements Runnable {
 
     /**
      * Disconnects the current socket.
+     *
+     * @since 1.0
      */
     public void disconnect() {
         disconnect = true;
