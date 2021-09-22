@@ -5,10 +5,11 @@ package com.konradrej.rcpc.core.network;
  *
  * @author Konrad Rej
  * @author www.konradrej.com
- * @version 1.1
+ * @version 1.2
  */
 public enum MessageType {
     INFO_CURRENT_VOLUME_UPDATE,
+    INFO_USER_ACCEPTED_CONNECTION,
     INFO_USER_CLOSED_CONNECTION,
 
     ACTION_INCREASE_VOLUME,

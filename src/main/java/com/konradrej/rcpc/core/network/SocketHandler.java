@@ -92,6 +92,8 @@ public abstract class SocketHandler implements Runnable {
         disconnect = true;
 
         try {
+            writer.objectOutputStream.flush();
+
             socket.close();
         } catch (IOException ignored) {
         }
