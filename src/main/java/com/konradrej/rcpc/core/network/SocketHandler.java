@@ -15,7 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @author Konrad Rej
  * @author www.konradrej.com
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public abstract class SocketHandler implements Runnable {
@@ -53,19 +53,6 @@ public abstract class SocketHandler implements Runnable {
         this.socket = socket;
         this.LOGGER = LOGGER;
 
-        if (inputEnabled) {
-            try {
-                ObjectInputStream objectInputStream = new ObjectInputStream(this.socket.getInputStream());
-                reader = new Reader(objectInputStream);
-                Thread readerThread = new Thread(reader);
-                readerThread.start();
-            } catch (IOException e) {
-                if (LOGGER != null) {
-                    LOGGER.error("Could not construct inputstream: " + e.getLocalizedMessage());
-                }
-            }
-        }
-
         if (outputEnabled) {
             try {
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
@@ -75,6 +62,19 @@ public abstract class SocketHandler implements Runnable {
             } catch (IOException e) {
                 if (LOGGER != null) {
                     LOGGER.error("Could not construct outputstream: " + e.getLocalizedMessage());
+                }
+            }
+        }
+
+        if (inputEnabled) {
+            try {
+                ObjectInputStream objectInputStream = new ObjectInputStream(this.socket.getInputStream());
+                reader = new Reader(objectInputStream);
+                Thread readerThread = new Thread(reader);
+                readerThread.start();
+            } catch (IOException e) {
+                if (LOGGER != null) {
+                    LOGGER.error("Could not construct inputstream: " + e.getLocalizedMessage());
                 }
             }
         }
@@ -123,8 +123,6 @@ public abstract class SocketHandler implements Runnable {
                     LOGGER.error("Error while getting message: " + e.getLocalizedMessage());
                 }
             }
-
-            disconnect();
         }
     }
 
