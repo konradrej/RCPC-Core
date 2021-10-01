@@ -5,7 +5,7 @@ package com.konradrej.rcpc.core.network;
  *
  * @author Konrad Rej
  * @author www.konradrej.com
- * @version 1.2
+ * @version 1.3
  */
 public enum MessageType {
     INFO_CURRENT_VOLUME_UPDATE,
@@ -25,6 +25,7 @@ public enum MessageType {
     ACTION_CLICK_AND_DRAG,
     ACTION_SCROLL,
     ACTION_MOVE,
+    ACTION_GET_CURRENT_VOLUME,
 
     ERROR_SERVER_BUSY,
     ERROR_USER_ABORTED_CONNECTION,
