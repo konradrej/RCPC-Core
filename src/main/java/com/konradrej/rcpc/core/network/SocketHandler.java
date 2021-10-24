@@ -15,7 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @author Konrad Rej
  * @author www.konradrej.com
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public abstract class SocketHandler implements Runnable {
@@ -27,6 +27,8 @@ public abstract class SocketHandler implements Runnable {
 
     protected Reader reader = null;
     protected Writer writer = null;
+    private Thread readerThread;
+    private Thread writerThread;
     protected boolean disconnect = false;
 
     /**
@@ -37,46 +39,71 @@ public abstract class SocketHandler implements Runnable {
      * @since 1.0
      */
     public SocketHandler(Socket socket, Logger LOGGER) {
-        this(socket, true, true, LOGGER);
+        this(socket, true, true, LOGGER, null, null);
     }
 
     /**
-     * Constructor to customize input and output streams being disabled or not.
+     * Simplified constructor which enables both input and output and passes existing object streams.
      *
-     * @param socket        the connected socket
-     * @param inputEnabled  whether to enable input
-     * @param outputEnabled whether to enable output
-     * @param LOGGER        logger to be used, can be null to disable
+     * @param socket             the connected socket
+     * @param LOGGER             logger to be used, can be null to disable
+     * @param objectOutputStream object output stream to pass, null to create from socket
+     * @param objectInputStream  object input stream to pass, null to create from socket
      * @since 1.0
      */
-    public SocketHandler(Socket socket, boolean inputEnabled, boolean outputEnabled, Logger LOGGER) {
+    public SocketHandler(Socket socket, Logger LOGGER, ObjectOutputStream objectOutputStream, ObjectInputStream objectInputStream) {
+        this(socket, true, true, LOGGER, objectOutputStream, objectInputStream);
+    }
+
+    /**
+     * Constructor to customize input and output streams being disabled or not as well as adds possibility to pass existing streams.
+     *
+     * @param socket             the connected socket
+     * @param inputEnabled       whether to enable input
+     * @param outputEnabled      whether to enable output
+     * @param LOGGER             logger to be used, can be null to disable
+     * @param objectOutputStream object output stream to pass, null to create from socket
+     * @param objectInputStream  object input stream to pass, null to create from socket
+     * @since 1.0
+     */
+    public SocketHandler(Socket socket, boolean inputEnabled, boolean outputEnabled, Logger LOGGER, ObjectOutputStream objectOutputStream, ObjectInputStream objectInputStream) {
         this.socket = socket;
         this.LOGGER = LOGGER;
 
         if (outputEnabled) {
-            try {
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
+            if (objectOutputStream != null) {
                 writer = new Writer(objectOutputStream);
-                Thread writerThread = new Thread(writer);
-                writerThread.start();
-            } catch (IOException e) {
-                if (LOGGER != null) {
-                    LOGGER.error("Could not construct outputstream: " + e.getLocalizedMessage());
+            } else {
+                try {
+                    objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
+                    writer = new Writer(objectOutputStream);
+                } catch (IOException e) {
+                    if (LOGGER != null) {
+                        LOGGER.error("Could not construct outputstream: " + e.getLocalizedMessage());
+                    }
                 }
             }
+
+            writerThread = new Thread(writer);
+            writerThread.start();
         }
 
         if (inputEnabled) {
-            try {
-                ObjectInputStream objectInputStream = new ObjectInputStream(this.socket.getInputStream());
+            if (objectInputStream != null) {
                 reader = new Reader(objectInputStream);
-                Thread readerThread = new Thread(reader);
-                readerThread.start();
-            } catch (IOException e) {
-                if (LOGGER != null) {
-                    LOGGER.error("Could not construct inputstream: " + e.getLocalizedMessage());
+            } else {
+                try {
+                    objectInputStream = new ObjectInputStream(this.socket.getInputStream());
+                    reader = new Reader(objectInputStream);
+                } catch (IOException e) {
+                    if (LOGGER != null) {
+                        LOGGER.error("Could not construct inputstream: " + e.getLocalizedMessage());
+                    }
                 }
             }
+
+            readerThread = new Thread(reader);
+            readerThread.start();
         }
     }
 
@@ -91,9 +118,17 @@ public abstract class SocketHandler implements Runnable {
     public void disconnect() {
         disconnect = true;
 
-        try {
-            writer.objectOutputStream.flush();
+        if (reader != null) {
+            while (readerThread.isAlive()) {
+            }
+        }
 
+        if (writer != null) {
+            while (writerThread.isAlive()) {
+            }
+        }
+
+        try {
             socket.close();
         } catch (IOException ignored) {
         }
@@ -143,6 +178,8 @@ public abstract class SocketHandler implements Runnable {
                         objectOutputStream.writeObject(message);
                     }
                 }
+
+                objectOutputStream.flush();
             } catch (IOException | InterruptedException e) {
                 if (LOGGER != null) {
                     LOGGER.error("Error while sending message: " + e.getLocalizedMessage());
