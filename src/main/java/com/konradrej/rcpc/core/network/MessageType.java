@@ -5,7 +5,7 @@ package com.konradrej.rcpc.core.network;
  *
  * @author Konrad Rej
  * @author www.konradrej.com
- * @version 1.4
+ * @version 1.5
  */
 public enum MessageType {
     INFO_CURRENT_VOLUME_UPDATE,
