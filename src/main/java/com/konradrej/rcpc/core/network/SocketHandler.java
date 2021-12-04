@@ -15,7 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @author Konrad Rej
  * @author www.konradrej.com
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public abstract class SocketHandler implements Runnable {
@@ -155,7 +155,9 @@ public abstract class SocketHandler implements Runnable {
                 }
             } catch (IOException | ClassNotFoundException e) {
                 if (LOGGER != null) {
-                    LOGGER.error("Error while getting message: " + e.getLocalizedMessage());
+                    if (!disconnect) {
+                        LOGGER.error("Error while getting message: " + e.getLocalizedMessage());
+                    }
                 }
             }
         }
@@ -182,7 +184,9 @@ public abstract class SocketHandler implements Runnable {
                 objectOutputStream.flush();
             } catch (IOException | InterruptedException e) {
                 if (LOGGER != null) {
-                    LOGGER.error("Error while sending message: " + e.getLocalizedMessage());
+                    if (!disconnect) {
+                        LOGGER.error("Error while sending message: " + e.getLocalizedMessage());
+                    }
                 }
             }
         }
